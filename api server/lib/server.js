@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const auth = require('../../auth server/src/auth/middleware');
 
 const app = express();
 

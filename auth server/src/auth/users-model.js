@@ -1,57 +1,120 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('./roles-model.js');
+
+const SINGLE_USE_TOKENS = !!process.env.SINGLE_USE_TOKENS;
+const TOKEN_EXPIRE = process.env.TOKEN_LIFETIME || '5m';
+const SECRET = process.env.SECRET || 'foobar';
+
+const usedTokens = new Set();
 
 const users = new mongoose.Schema({
-  username: {type: String, required: true, unique: true},
-  password: {type: String, required: true},
+  username: {type:String, required:true, unique:true},
+  password: {type:String, required:true},
   email: {type: String},
-  role: {type: String, required:true, default:'user', enum:['admin','editor','user'] },
+  role: {type: String, default:'user', enum: ['admin','editor','user', 'superuser']},
+}, {toObject: { virtuals: true }, toJSON: { virtuals: true} });
+
+users.virtual('acl', {
+  ref: 'roles',
+  localField: 'role',
+  foreignField: 'role',
+  justOne: true
 });
+
+users.pre('save', function() {
+  this.populate('acl');
+});
+
+const capabilities = {
+  superuser: ['create', 'read', 'update', 'delete', 'everything'],
+  admin: ['create','read','update','delete'],
+  editor: ['create', 'read', 'update'],
+  user: ['read'],
+};
 
 users.pre('save', function(next) {
-  bcrypt.hash(this.password,10)
-  this.password = hashedPassword;
-  next();
-})
-.catch( error => {throw error;} );
+  bcrypt.hash(this.password, 10)
+    .then(hashedPassword => {
+      this.password = hashedPassword;
+      next();
+    })
+    .catch(error => {throw new Error(error);});
 });
 
-.then(hashedPassword => {
-users.statics.authenticateToken = async function (token) {
+users.statics.createFromOauth = function(email) {
+
+  if(! email) { return Promise.reject('Validation Error'); }
+
+  return this.findOne( {email} )
+    .then(user => {
+      if( !user ) { throw new Error('User Not Found'); }
+      return user;
+    })
+    .catch( error => {
+      let username = email;
+      let password = 'none';
+      return this.create({username, password, email});
+    });
+
+};
+
+users.statics.authenticateToken = function(token) {
+
+  if ( usedTokens.has(token ) ) {
+    return Promise.reject('Invalid Token');
+  }
+
   try {
-    let parsedToken = jwt.verify(token, process.env.SECRET || 'changeit');
-    let query = {_id:parsedToken.id};
+    let parsedToken = jwt.verify(token, SECRET);
+    (SINGLE_USE_TOKENS) && parsedToken.type !== 'key' && usedTokens.add(token);
+    let query = {_id: parsedToken.id};
     return this.findOne(query);
-  }
-  catch(error) {
-    return null;
-  }
+  } catch(e) { throw new Error('Invalid Token'); }
+
 };
 
 users.statics.authenticateBasic = function(auth) {
   let query = {username:auth.username};
   return this.findOne(query)
-    .then(user => user && user.comparePassword(auth.password))
-    .catch(console.error);
+    .then( user => user && user.comparePassword(auth.password) )
+    .catch(error => {throw error;});
 };
 
-// Compare a plain text password against the hashed one we have saved
 users.methods.comparePassword = function(password) {
-  return bcrypt.compare(password, this.password)
-    .then((valid) => (valid ? this : null));
+  return bcrypt.compare( password, this.password )
+    .then( valid => valid ? this : null);
 };
 
-// Generate a JWT from the user id and a secret
-users.methods.generateToken = function() {
-  let tokenData = {
-    id:this._id,
-    capabilities: (this.acl && this.acl.capabilities) || [],
-    //exp: time to expire
+users.methods.generateToken = function(type) {
+
+  let token = {
+    id: this._id,
+    capabilities: capabilities[this.role],
+    type: type || 'user',
   };
-  return jwt.sign(tokenData, process.env.SECRET || 'changeit' );
+
+  let options = {};
+  if ( type !== 'key' && !! TOKEN_EXPIRE ) {
+    options = { expiresIn: TOKEN_EXPIRE };
+  }
+
+  return jwt.sign(token, SECRET, options);
+};
+
+users.methods.can = function(capability) {
+  if (!this.acl || !this.acl.capabilities)
+    return false;
+
+  return this.acl.capabilities.includes(capability);
+  //return capabilities[this.role].includes(capability);
+};
+
+users.methods.generateKey = function() {
+  return this.generateToken('key');
 };
 
 module.exports = mongoose.model('users', users);
