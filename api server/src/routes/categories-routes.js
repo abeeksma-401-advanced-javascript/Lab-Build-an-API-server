@@ -18,7 +18,7 @@ catRouter.get('/categories', (req, res, next) => {
 });
 
 
-
+// THESE NEED TO TURN INTO ROUTES
 // app.get('/categories', getCategories);
 // app.post('/categories', postCategories);
 // app.get('/categories/:id', getCategory);
