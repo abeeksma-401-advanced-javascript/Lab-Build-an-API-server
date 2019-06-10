@@ -1,5 +1,16 @@
 'use strict';
 
-const server = require('./lib/server.js');
+require('dotenv').config();
+const mongoose = require('mongoose');
 
-server.start(8080);
+const mongooseOptions = {
+  useNewUrlParser:true,
+  useCreateIndex: true,
+};
+
+const MONGODB_URI = process.env.MONGODB_URI ||
+  'mongodb://localhost/mongooseIsStupidGiveMeARealDatabase';
+
+mongoose.connect(MONGODB_URI, mongooseOptions);
+
+require('./src/app.js').start(process.env.PORT || 3000);
