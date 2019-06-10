@@ -9,13 +9,6 @@ const morgan = require('morgan');
 const errorHandler = require( './middleware/error.js');
 const notFound = require( './middleware/404.js' );
 
-// Models
-const Products = require('./models/products.js');
-const products = new Products();
-
-const Categories = require('./models/categories.js');
-const categories = new Categories();
-
 // Prepare the express app
 const app = express();
 
@@ -25,8 +18,6 @@ app.use(morgan('dev'));
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-
-
 
 // Routes NEED TO BE SWITCHED TO ROUTER
 // need to put in the use router shit
@@ -47,48 +38,6 @@ app.use(notFound);
 app.use(errorHandler);
 
 // ROUTE HANDLER FUNCTIONS
-function getCategories(request,response,next) {
-  // expects an array of object to be returned from the model
-  categories.get()
-    .then( data => {
-      const output = {
-        count: data.length,
-        results: data,
-      };
-      response.status(200).json(output);
-    })
-    .catch( next );
-}
-
-function getCategory(request,response,next) {
-  // expects an array with the one matching record from the model
-  categories.get(request.params.id)
-    .then( result => response.status(200).json(result[0]) )
-    .catch( next );
-}
-
-function postCategories(request,response,next) {
-  // expects the record that was just added to the database
-  categories.post(request.body)
-    .then( result => response.status(200).json(result[0]) )
-    .catch( next );
-}
-
-
-function putCategories(request,response,next) {
-  // expects the record that was just updated in the database
-  categories.put(request.params.id, request.body)
-    .then( result => response.status(200).json(result[0]) )
-    .catch( next );
-}
-
-function deleteCategories(request,response,next) {
-  // Expects no return value (resource was deleted)
-  categories.delete(request.params.id)
-    .then( result => response.status(200).json(result) )
-    .catch( next );
-}
-
 
 
 

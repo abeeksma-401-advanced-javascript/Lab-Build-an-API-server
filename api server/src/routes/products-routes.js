@@ -6,11 +6,13 @@ const prodRouter = express.Router();
 const Products = require('./models/products.js');
 const products = new Products();
 
+
 prodRouter.get('/products', getProducts);
 prodRouter.post('/products', postProducts);
 prodRouter.get('/products/:id', getProduct);
 prodRouter.put('/products/:id', putProducts);
 prodRouter.delete('/products/:id', deleteProducts);
+
 
 function getProducts(request,response,next) {
   // expects an array of objects back
