@@ -19,7 +19,11 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-// TODO: put in use router bits for product-routes and categories-routes!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+//cat and prod routes
+app.use(require('./routes/categories-routes'));
+app.use(require('./routes/products-routes'));
 
 // Catchalls
 app.use(notFound);
