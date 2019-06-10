@@ -19,27 +19,11 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-// Routes NEED TO BE SWITCHED TO ROUTER
-// need to put in the use router shit
-app.get('/categories', getCategories);
-app.post('/categories', postCategories);
-app.get('/categories/:id', getCategory);
-app.put('/categories/:id', putCategories);
-app.delete('/categories/:id', deleteCategories);
-
-app.get('/products', getProducts);
-app.post('/products', postProducts);
-app.get('/products/:id', getProduct);
-app.put('/products/:id', putProducts);
-app.delete('/products/:id', deleteProducts);
+// TODO: put in use router bits for product-routes and categories-routes!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 // Catchalls
 app.use(notFound);
 app.use(errorHandler);
-
-// ROUTE HANDLER FUNCTIONS
-
-
 
 module.exports = {
   server: app,

@@ -3,7 +3,7 @@
 const User = require('./users-model.js');
 
 module.exports = (capability) => {
-
+  
   return (req, res, next) => {
 
     try {

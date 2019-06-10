@@ -19,7 +19,7 @@ const users = new mongoose.Schema({
 }, {toObject: { virtuals: true }, toJSON: { virtuals: true} });
 
 users.virtual('acl', {
-  ref: 'roles',
+  ref: 'roles', 
   localField: 'role',
   foreignField: 'role',
   justOne: true
@@ -63,18 +63,18 @@ users.statics.createFromOauth = function(email) {
 };
 
 users.statics.authenticateToken = function(token) {
-
+  
   if ( usedTokens.has(token ) ) {
     return Promise.reject('Invalid Token');
   }
-
+  
   try {
     let parsedToken = jwt.verify(token, SECRET);
     (SINGLE_USE_TOKENS) && parsedToken.type !== 'key' && usedTokens.add(token);
     let query = {_id: parsedToken.id};
     return this.findOne(query);
   } catch(e) { throw new Error('Invalid Token'); }
-
+  
 };
 
 users.statics.authenticateBasic = function(auth) {
@@ -90,26 +90,26 @@ users.methods.comparePassword = function(password) {
 };
 
 users.methods.generateToken = function(type) {
-
+  
   let token = {
     id: this._id,
     capabilities: capabilities[this.role],
     type: type || 'user',
   };
-
+  
   let options = {};
-  if ( type !== 'key' && !! TOKEN_EXPIRE ) {
+  if ( type !== 'key' && !! TOKEN_EXPIRE ) { 
     options = { expiresIn: TOKEN_EXPIRE };
   }
-
+  
   return jwt.sign(token, SECRET, options);
 };
 
 users.methods.can = function(capability) {
   if (!this.acl || !this.acl.capabilities)
-    return false;
+  return false;
 
-  return this.acl.capabilities.includes(capability);
+return this.acl.capabilities.includes(capability);
   //return capabilities[this.role].includes(capability);
 };
 
