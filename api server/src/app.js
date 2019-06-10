@@ -26,7 +26,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-// Routes
+// Routes NEED TO BE SWITCHED TO ROUTER
 app.get('/categories', getCategories);
 app.post('/categories', postCategories);
 app.get('/categories/:id', getCategory);
