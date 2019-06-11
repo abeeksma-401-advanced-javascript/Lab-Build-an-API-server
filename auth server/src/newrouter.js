@@ -1,7 +1,7 @@
 'use strict';
 
-const auth = require('./auth/middleware');
-const User = require('./auth/users-model');
+const auth = require('../../api server/src/auth/middleware');
+const User = require('../../api server/src/auth/users-model');
 
 const express = require('express');
 

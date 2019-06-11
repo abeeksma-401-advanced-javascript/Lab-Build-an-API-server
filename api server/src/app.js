@@ -20,7 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 
-
 //cat and prod routes
 app.use(require('./routes/categories-routes'));
 app.use(require('./routes/products-routes'));
