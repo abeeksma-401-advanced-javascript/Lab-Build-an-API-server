@@ -17,7 +17,6 @@ class Categories {
   }
   
   post(record) {
-    console.log(record);
     var category = new Category (record);
     return category.save();
   }

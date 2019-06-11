@@ -13,7 +13,6 @@ class Products {
   }
   
   post(entry) {
-    console.log(entry);
     var product = new Product (entry);
     console.log(`this is the newly posted Product ${product}`)
     return product.save();
