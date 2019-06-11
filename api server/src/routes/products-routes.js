@@ -6,12 +6,14 @@ const prodRouter = express.Router();
 const Products = require('../models/products');
 const products = new Products();
 
+const auth = require('../auth/middleware')
 
-prodRouter.get('/products', getProducts);
-prodRouter.post('/products', postProducts);
-prodRouter.get('/products/:id', getProduct);
-prodRouter.put('/products/:id', putProducts);
-prodRouter.delete('/products/:id', deleteProducts);
+
+prodRouter.get('/products', auth(), getProducts);
+prodRouter.post('/products', auth(), postProducts);
+prodRouter.get('/products/:id', auth(), getProduct);
+prodRouter.put('/products/:id', auth(), putProducts);
+prodRouter.delete('/products/:id', auth(), deleteProducts);
 
 
 function getProducts(request,response,next) {
