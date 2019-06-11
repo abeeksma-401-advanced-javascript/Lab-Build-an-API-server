@@ -3,7 +3,7 @@
 const express = require('express');
 const catRouter = express.Router();
 
-const Categories = require('./models/categories.js');
+const Categories = require('../models/categories');
 const categories = new Categories();
 
 

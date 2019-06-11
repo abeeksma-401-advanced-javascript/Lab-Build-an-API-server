@@ -2,10 +2,10 @@
 
 process.env.SECRET='test';
 
-const {startDB,stopDB} = require('../../../../auth server/__tests__/supergoose.js');
+const {startDB,stopDB} = require('../supergoose.js/index.js');
 const auth = require('../../../src/auth/middleware.js');
 const Users = require('../../../src/auth/users-model.js');
-const Role = require('../../../src/auth/roles-model')
+const Role = require('../../../src/auth/roles-model');
 
 let users = {
   admin: {username: 'admin', password: 'password', role: 'admin'},

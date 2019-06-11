@@ -9,6 +9,8 @@ const morgan = require('morgan');
 const errorHandler = require( './middleware/error.js');
 const notFound = require( './middleware/404.js' );
 
+const authRouter = require('./auth/router');
+
 // Prepare the express app
 const app = express();
 
@@ -19,7 +21,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-
+//use authentication 
+app.use(authRouter);
 //cat and prod routes
 app.use(require('./routes/categories-routes'));
 app.use(require('./routes/products-routes'));
