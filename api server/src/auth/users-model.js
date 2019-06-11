@@ -30,7 +30,7 @@ users.pre('save', function() {
 });
 
 const capabilities = {
-  superuser: ['create', 'read', 'update', 'delete', 'everything'],
+  superuser: ['create', 'read', 'update', 'delete', 'system'],
   admin: ['create','read','update','delete'],
   editor: ['create', 'read', 'update'],
   user: ['read'],

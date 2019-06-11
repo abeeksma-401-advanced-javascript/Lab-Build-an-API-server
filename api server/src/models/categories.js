@@ -20,14 +20,14 @@ class Categories {
   
 //create a category
   post(record) {
+    console.log(record);
     var category = new Category (record);
-    db.category.save();
     console.log(`this is the newly posted Cat ${category}`)
     return category.save();
   }
 
 //update a category?  
-  put(_id, record){
+  async put(_id, record){
     let updatedCat = await Category.findOne(_id);
     updatedCat = Object.assign(save, entry)//figure out what the hells goes in to this
     await updatedCat.save();

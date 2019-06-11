@@ -9,7 +9,7 @@ const mongooseOptions = {
 };
 
 const MONGODB_URI = process.env.MONGODB_URI ||
-  'mongodb://localhost/mongooseIsStupidGiveMeARealDatabase';
+  'mongodb://localhost/lab15apibuild';
 
 mongoose.connect(MONGODB_URI, mongooseOptions);
 

@@ -3,7 +3,7 @@
 const express = require('express');
 const prodRouter = express.Router();
 
-const Products = require('./models/products.js');
+const Products = require('../models/products');
 const products = new Products();
 
 
