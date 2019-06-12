@@ -5,7 +5,7 @@ const Product = require('./products-schema');
 
 class Products {
 
-  get(id) {
+  get(_id) {
     if(!/^[0-9a-z]{24}$/i.test(_id)){
     return Promise.resolve(null)
     }
@@ -18,12 +18,16 @@ class Products {
     return product.save();
   }
 
-  put(id, entry) {
+  async put(_id, entry) {
+    let updatedProd = await product.findOne({_id});
+    Object.assign(updatedProd, entry);
+    await updatedProd.save();
   }
 
-  delete(id) {
+  delete(_id) {
   }
 
+  //TODO: figure out WTF this is
   sanitize(entry) {
   }
 

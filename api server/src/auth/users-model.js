@@ -7,7 +7,7 @@ require('./roles-model.js');
 
 const SINGLE_USE_TOKENS = !!process.env.SINGLE_USE_TOKENS;
 const TOKEN_EXPIRE = process.env.TOKEN_LIFETIME || '5m';
-const SECRET = process.env.SECRET || 'foobar';
+const SECRET = process.env.SECRET || 'secret';
 
 const usedTokens = new Set();
 
@@ -15,7 +15,7 @@ const users = new mongoose.Schema({
   username: {type:String, required:true, unique:true},
   password: {type:String, required:true},
   email: {type: String},
-  role: {type: String, default:'user', enum: ['admin','editor','user', 'superuser']},
+  role: {type: String, default:'user', enum: ['admin','editor','user','superuser']},
 }, {toObject: { virtuals: true }, toJSON: { virtuals: true} });
 
 users.virtual('acl', {
@@ -63,7 +63,7 @@ users.statics.createFromOauth = function(email) {
 };
 
 users.statics.authenticateToken = function(token) {
-  
+  console.log(`Authenticating token: ${token}`);
   if ( usedTokens.has(token ) ) {
     return Promise.reject('Invalid Token');
   }
@@ -101,8 +101,11 @@ users.methods.generateToken = function(type) {
   if ( type !== 'key' && !! TOKEN_EXPIRE ) { 
     options = { expiresIn: TOKEN_EXPIRE };
   }
-  
-  return jwt.sign(token, SECRET, options);
+   
+  let signedToken = jwt.sign(token, SECRET, options);
+
+  console.log("I MAKE TOKEN", signedToken);
+  return signedToken;
 };
 
 users.methods.can = function(capability) {

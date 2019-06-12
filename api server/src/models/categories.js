@@ -23,14 +23,14 @@ class Categories {
 
   //TODO: fix this mess
   async put(_id, record){
-    let updatedCat = await Category.findOne(_id);
-    updatedCat = Object.assign(save, entry)// <------ TODO: figure out what the hells goes in to this
+    let updatedCat = await Category.findOne({_id});
+    Object.assign(updatedCat, entry);
     await updatedCat.save();
   }
     
   //TODO: DESTROY!!!!  
   delete(_id) {
-    Cateogory.deleteOne(_id)
+    Cateogory.deleteOne({_id})
   }
 
 }

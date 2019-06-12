@@ -52,7 +52,11 @@ module.exports = (capability) => {
     }
 
     function _authError() {
-      next('Invalid User ID/Password');
+      next({
+        status: 401,
+        statusMessage: 'Unauthorized',
+        message: 'Invalid Username/Password'
+      });
     }
 
   };

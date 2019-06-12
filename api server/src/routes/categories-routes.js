@@ -2,18 +2,17 @@
 
 const express = require('express');
 const catRouter = express.Router();
+const auth = require('../auth/middleware')
 
 const Categories = require('../models/categories');
 const categories = new Categories();
 
-const auth = require('../auth/middleware')
-
 //TODO: put all the auth mayhem in 
 catRouter.get('/categories', auth(), getCategories);
-catRouter.post('/categories', auth(), postCategories);
+catRouter.post('/categories', auth('update'), postCategories);
 catRouter.get('/categories/:id', auth(), getCategory);
-catRouter.put('/categories/:id', auth(), putCategories);
-catRouter.delete('/categories/:id', auth(), deleteCategories);
+catRouter.put('/categories/:id', auth('update'), putCategories);
+catRouter.delete('/categories/:id', auth('delete'), deleteCategories);
 
 
 function getCategories(request, response, next) {
@@ -32,14 +31,14 @@ function getCategories(request, response, next) {
 function getCategory(request, response, next) {
   // expects an array with the one matching record from the model
   categories.get(request.params.id)
-    .then( result => response.status(200).json(result[0]) )
+    .then( result => response.status(200).json(result[0]) ) 
     .catch( next );
 }
 
 function postCategories(request, response, next) {
   // expects the record that was just added to the database
   categories.post(request.body)
-    .then( result => response.status(200).json(result[0]) )
+    .then( result => response.status(200).json(result[0]) ) //<------------ the [0] may need to be removed figure out what result is
     .catch( next );
 }
 
